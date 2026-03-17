@@ -1,0 +1,85 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-secondary);
+}
+
+.colorGrid {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.colorSwatch {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.colorSwatch:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.colorSwatchActive {
+  composes: colorSwatch;
+  border-color: var(--color-primary-600);
+  box-shadow: 0 0 0 2px var(--color-primary-200);
+}
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.memberName {
+  flex: 1;
+  font-size: var(--text-sm);
+}
+
+.roleSelect {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+}
+
+.removeButton {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.removeButton:hover {
+  background-color: var(--color-error-bg);
+}
+
+.dangerZone {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}

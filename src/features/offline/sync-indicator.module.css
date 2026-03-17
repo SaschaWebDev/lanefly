@@ -1,0 +1,19 @@
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.saving {
+  color: var(--color-warning);
+}
+
+.offline {
+  color: var(--color-error);
+}
+
+.error {
+  color: var(--color-error);
+}

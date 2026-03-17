@@ -1,0 +1,35 @@
+.indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-base);
+}
+
+.connected {
+  background-color: var(--color-success);
+}
+
+.connecting {
+  background-color: var(--color-warning);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.disconnected {
+  background-color: var(--color-error);
+}
+
+.label {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

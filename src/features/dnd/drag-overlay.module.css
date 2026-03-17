@@ -1,0 +1,27 @@
+.overlay {
+  opacity: 0.9;
+  cursor: grabbing;
+}
+
+.cardGhost {
+  composes: overlay;
+  width: 248px;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-primary-300);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+}
+
+.columnGhost {
+  composes: overlay;
+  width: 272px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-primary-300);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-xl);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+}

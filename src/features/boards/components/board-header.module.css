@@ -1,0 +1,84 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  min-height: 48px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: background-color var(--transition-fast);
+}
+
+.backButton:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  flex: 1;
+  min-width: 0;
+}
+
+.titleInput {
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-2);
+  background: transparent;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.titleInput:hover {
+  border-color: var(--color-border);
+}
+
+.titleInput:focus {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-surface);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.starButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-lg);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.starButton:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-star);
+}
+
+.starred {
+  color: var(--color-star);
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: var(--space-2) var(--space-4);
+  }
+}
