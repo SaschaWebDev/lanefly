@@ -3,7 +3,7 @@ import { supabase } from '@/config/supabase';
 import { handleSupabaseError } from '@/lib/api-client';
 import { createDemoColumn, createDemoCard, getDemoColumns } from '@/features/columns/api/demo-store';
 import { createDemoLane, getDemoLanes } from '@/features/lanes/api/demo-store';
-import { updateDemoColumn } from '@/features/columns/api/demo-store';
+
 
 interface ImportColumn {
   title: string;

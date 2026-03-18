@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { SyntheticListenerMap } from '@dnd-kit/sortable';
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { useUpdateLaneMutation } from '../api/update-lane';
 import { useDeleteLaneMutation } from '../api/delete-lane';
 import { usePermission } from '@/features/permissions/hooks/use-permission';

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
-import type { SyntheticListenerMap } from '@dnd-kit/sortable';
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import type { ColumnWithCards } from '@/features/columns/types';
 import type { BoardRole } from '@/types/database';
 import { SortableColumn } from '@/features/dnd/sortable-column';

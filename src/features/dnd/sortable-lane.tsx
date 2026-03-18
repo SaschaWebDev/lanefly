@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useSortable, defaultAnimateLayoutChanges } from '@dnd-kit/sortable';
-import type { AnimateLayoutChanges, SyntheticListenerMap } from '@dnd-kit/sortable';
+import type { AnimateLayoutChanges } from '@dnd-kit/sortable';
+import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { CSS } from '@dnd-kit/utilities';
 import type { LaneWithColumns } from '@/features/lanes/types';
 

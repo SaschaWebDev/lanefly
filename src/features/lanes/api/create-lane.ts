@@ -55,7 +55,7 @@ async function createLane({ boardId, title, position }: CreateLaneInput) {
       const { data: defaultLane, error: defaultErr } = await supabase
         .from('lanes')
         .insert({ board_id: boardId, title: 'Default', position: 1024 })
-        .select()
+        .select('id')
         .single();
 
       if (defaultErr) handleSupabaseError(defaultErr);
