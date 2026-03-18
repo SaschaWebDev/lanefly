@@ -20,12 +20,18 @@ export function useBoardRealtime(boardId: string, userId: string | undefined) {
       clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         void queryClient.invalidateQueries({ queryKey: ['columns', boardId] });
+        void queryClient.invalidateQueries({ queryKey: ['lanes', boardId] });
         void queryClient.invalidateQueries({ queryKey: ['board', boardId] });
       }, DEBOUNCE_MS);
     }
 
     const channel = supabase
       .channel(`board-changes:${boardId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lanes', filter: `board_id=eq.${boardId}` },
+        invalidateDebounced,
+      )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'columns', filter: `board_id=eq.${boardId}` },

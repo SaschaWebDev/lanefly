@@ -64,6 +64,7 @@ function seedBoard(boardId: string): ColumnWithCards[] {
   cols.push({
     id: col1Id,
     board_id: boardId,
+    lane_id: null,
     title: 'To Do',
     position: 1024,
     created_at: '2026-03-01T00:00:00Z',
@@ -75,6 +76,7 @@ function seedBoard(boardId: string): ColumnWithCards[] {
   cols.push({
     id: col2Id,
     board_id: boardId,
+    lane_id: null,
     title: 'In Progress',
     position: 2048,
     created_at: '2026-03-01T00:00:00Z',
@@ -86,6 +88,7 @@ function seedBoard(boardId: string): ColumnWithCards[] {
   cols.push({
     id: col3Id,
     board_id: boardId,
+    lane_id: null,
     title: 'Done',
     position: 3072,
     created_at: '2026-03-01T00:00:00Z',
@@ -111,11 +114,12 @@ export function getDemoColumns(boardId: string): ColumnWithCards[] {
   return seedBoard(boardId);
 }
 
-export function createDemoColumn(boardId: string, title: string, position: number): ColumnWithCards {
+export function createDemoColumn(boardId: string, title: string, position: number, laneId?: string | null): ColumnWithCards {
   const cols = demoColumnStore.get(boardId) ?? seedBoard(boardId);
   const col: ColumnWithCards = {
     id: `demo-col-${nextColNum++}`,
     board_id: boardId,
+    lane_id: laneId ?? null,
     title,
     position,
     created_at: new Date().toISOString(),
@@ -130,7 +134,7 @@ export function createDemoColumn(boardId: string, title: string, position: numbe
 export function updateDemoColumn(
   boardId: string,
   columnId: string,
-  updates: { title?: string; position?: number; archived_at?: string | null },
+  updates: { title?: string; position?: number; lane_id?: string | null; archived_at?: string | null },
 ): void {
   const cols = demoColumnStore.get(boardId);
   if (!cols) return;
@@ -138,6 +142,7 @@ export function updateDemoColumn(
   if (!col) return;
   if (updates.title !== undefined) col.title = updates.title;
   if (updates.position !== undefined) col.position = updates.position;
+  if (updates.lane_id !== undefined) col.lane_id = updates.lane_id;
   if (updates.archived_at !== undefined) {
     col.archived_at = updates.archived_at;
     const archivedAt = updates.archived_at;

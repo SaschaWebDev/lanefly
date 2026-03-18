@@ -15,9 +15,10 @@ interface SortableColumnProps {
   column: ColumnWithCards;
   boardId: string;
   role: BoardRole;
+  laneId?: string;
 }
 
-export function SortableColumn({ column, boardId, role }: SortableColumnProps) {
+export function SortableColumn({ column, boardId, role, laneId }: SortableColumnProps) {
   const {
     attributes,
     listeners,
@@ -27,7 +28,7 @@ export function SortableColumn({ column, boardId, role }: SortableColumnProps) {
     isDragging,
   } = useSortable({
     id: column.id,
-    data: { type: 'column' },
+    data: { type: 'column', laneId },
     animateLayoutChanges,
   });
 

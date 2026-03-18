@@ -12,18 +12,22 @@ import {
 import {
   SortableContext,
   horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import type { ColumnWithCards } from '@/features/columns/types';
+import type { Lane } from '@/types/common';
 import { useBoardDnd } from './use-board-dnd';
 import { BoardDragOverlay } from './drag-overlay';
 
 interface BoardDndContextProps {
   boardId: string;
   columns: ColumnWithCards[];
+  lanes?: Lane[];
+  onColumnLaneChange?: (override: { columnId: string; targetLaneId: string } | null) => void;
   children: ReactNode;
 }
 
-export function BoardDndContext({ boardId, columns, children }: BoardDndContextProps) {
+export function BoardDndContext({ boardId, columns, lanes, onColumnLaneChange, children }: BoardDndContextProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -34,13 +38,24 @@ export function BoardDndContext({ boardId, columns, children }: BoardDndContextP
   const {
     activeCard,
     activeColumn,
+    activeLane,
     type: dragType,
     handleDragStart,
     handleDragEnd,
-  } = useBoardDnd(boardId, columns);
+    handleDragOver,
+    handleDragCancel,
+  } = useBoardDnd(boardId, columns, lanes, onColumnLaneChange);
 
   const collisionDetection: CollisionDetection = useCallback(
     (args) => {
+      if (dragType === 'lane') {
+        return closestCenter({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(
+            (container) => container.data.current?.type === 'lane',
+          ),
+        });
+      }
       if (dragType === 'column') {
         return closestCenter({
           ...args,
@@ -54,6 +69,8 @@ export function BoardDndContext({ boardId, columns, children }: BoardDndContextP
     [dragType],
   );
 
+  const hasLanes = lanes && lanes.length > 0;
+  const laneIds = hasLanes ? lanes.map((l) => l.id) : [];
   const columnIds = columns.map((c) => c.id);
 
   return (
@@ -61,12 +78,20 @@ export function BoardDndContext({ boardId, columns, children }: BoardDndContextP
       sensors={sensors}
       collisionDetection={collisionDetection}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
-      <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
-        {children}
-      </SortableContext>
-      <BoardDragOverlay activeCard={activeCard} activeColumn={activeColumn} />
+      {hasLanes ? (
+        <SortableContext items={laneIds} strategy={verticalListSortingStrategy}>
+          {children}
+        </SortableContext>
+      ) : (
+        <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
+          {children}
+        </SortableContext>
+      )}
+      <BoardDragOverlay activeCard={activeCard} activeColumn={activeColumn} activeLane={activeLane} />
     </DndContext>
   );
 }

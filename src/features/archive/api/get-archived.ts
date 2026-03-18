@@ -2,22 +2,37 @@ import { useQuery } from '@tanstack/react-query';
 import { isDemoMode } from '@/config/demo';
 import { supabase } from '@/config/supabase';
 import { getDemoArchivedColumns, getDemoArchivedCards } from '@/features/columns/api/demo-store';
+import { getDemoArchivedLanes } from '@/features/lanes/api/demo-store';
 import { handleSupabaseError } from '@/lib/api-client';
-import type { Column, Card } from '@/types/common';
+import type { Column, Card, Lane } from '@/types/common';
 
 interface ArchivedItems {
+  lanes: Lane[];
   columns: Column[];
   cards: Card[];
 }
 
 async function fetchArchived(boardId: string): Promise<ArchivedItems> {
   if (isDemoMode) {
-    return { columns: getDemoArchivedColumns(boardId), cards: getDemoArchivedCards(boardId) };
+    return {
+      lanes: getDemoArchivedLanes(boardId),
+      columns: getDemoArchivedColumns(boardId),
+      cards: getDemoArchivedCards(boardId),
+    };
   }
+
+  const { data: lanes, error: laneErr } = await supabase
+    .from('lanes')
+    .select('id, board_id, title, position, created_at, updated_at, archived_at')
+    .eq('board_id', boardId)
+    .not('archived_at', 'is', null)
+    .order('archived_at', { ascending: false });
+
+  if (laneErr) handleSupabaseError(laneErr);
 
   const { data: cols, error: colErr } = await supabase
     .from('columns')
-    .select('id, board_id, title, position, created_at, updated_at, archived_at')
+    .select('id, board_id, lane_id, title, position, created_at, updated_at, archived_at')
     .eq('board_id', boardId)
     .not('archived_at', 'is', null)
     .order('archived_at', { ascending: false });
@@ -35,6 +50,7 @@ async function fetchArchived(boardId: string): Promise<ArchivedItems> {
   if (cardErr) handleSupabaseError(cardErr);
 
   return {
+    lanes,
     columns: cols,
     cards: cards,
   };

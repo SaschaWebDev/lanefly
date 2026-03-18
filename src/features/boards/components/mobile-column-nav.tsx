@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { ColumnWithCards } from '@/features/columns/types';
+import type { Lane } from '@/types/common';
 import { CardItem } from '@/features/cards/components/card-item';
 import { AddCard } from '@/features/cards/components/add-card';
 import styles from './mobile-column-nav.module.css';
@@ -7,10 +8,13 @@ import styles from './mobile-column-nav.module.css';
 interface MobileColumnNavProps {
   boardId: string;
   columns: ColumnWithCards[];
+  lanes?: Lane[];
   canEdit: boolean;
+  canCreateLane?: boolean;
+  onAddLane?: (title: string) => void;
 }
 
-export function MobileColumnNav({ boardId, columns, canEdit }: MobileColumnNavProps) {
+function ColumnCarousel({ boardId, columns, canEdit }: { boardId: string; columns: ColumnWithCards[]; canEdit: boolean }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +45,7 @@ export function MobileColumnNav({ boardId, columns, canEdit }: MobileColumnNavPr
   }, []);
 
   return (
-    <div className={styles.container}>
+    <>
       <div ref={scrollRef} className={styles.scrollWrapper}>
         {columns.map((col) => (
           <div key={col.id} className={styles.columnSlide}>
@@ -89,6 +93,64 @@ export function MobileColumnNav({ boardId, columns, canEdit }: MobileColumnNavPr
           </button>
         </div>
       )}
+    </>
+  );
+}
+
+export function MobileColumnNav({ boardId, columns, lanes, canEdit, canCreateLane, onAddLane }: MobileColumnNavProps) {
+  const [expandedLaneId, setExpandedLaneId] = useState<string | null>(null);
+  const hasLanes = lanes && lanes.length > 0;
+
+  // No lanes — original flat carousel
+  if (!hasLanes) {
+    return (
+      <div className={styles.container}>
+        <ColumnCarousel boardId={boardId} columns={columns} canEdit={canEdit} />
+      </div>
+    );
+  }
+
+  // Lane accordion
+  return (
+    <div className={styles.container}>
+      <div className={styles.accordionContainer}>
+        {lanes.map((lane) => {
+          const laneCols = columns
+            .filter((c) => c.lane_id === lane.id)
+            .sort((a, b) => a.position - b.position);
+          const isExpanded = expandedLaneId === lane.id;
+
+          return (
+            <div key={lane.id} className={styles.accordionItem}>
+              <button
+                className={styles.accordionHeader}
+                onClick={() => setExpandedLaneId(isExpanded ? null : lane.id)}
+              >
+                <span className={styles.accordionArrow}>{isExpanded ? '\u25BC' : '\u25B6'}</span>
+                <span className={styles.accordionTitle}>{lane.title}</span>
+                <span className={styles.accordionBadge}>{laneCols.length} lists</span>
+              </button>
+              {isExpanded && laneCols.length > 0 && (
+                <ColumnCarousel boardId={boardId} columns={laneCols} canEdit={canEdit} />
+              )}
+              {isExpanded && laneCols.length === 0 && (
+                <div className={styles.emptyLane}>No lists in this lane</div>
+              )}
+            </div>
+          );
+        })}
+        {canCreateLane && onAddLane && (
+          <button
+            className={styles.addLaneButton}
+            onClick={() => {
+              const title = prompt('Lane title:');
+              if (title?.trim()) onAddLane(title.trim());
+            }}
+          >
+            + Add a new lane
+          </button>
+        )}
+      </div>
     </div>
   );
 }

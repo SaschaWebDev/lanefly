@@ -20,6 +20,23 @@
   min-width: min-content;
 }
 
+.boardContent {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.lanesWrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 @media (max-width: 768px) {
   .columnsWrapper {
     padding: var(--space-2) var(--space-4);

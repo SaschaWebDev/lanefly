@@ -8,16 +8,24 @@ interface CreateColumnInput {
   boardId: string;
   title: string;
   position: number;
+  laneId?: string | null;
 }
 
-async function createColumn({ boardId, title, position }: CreateColumnInput) {
+async function createColumn({ boardId, title, position, laneId }: CreateColumnInput) {
   if (isDemoMode) {
-    return createDemoColumn(boardId, title, position);
+    return createDemoColumn(boardId, title, position, laneId);
   }
+
+  const insertData: { board_id: string; title: string; position: number; lane_id?: string } = {
+    board_id: boardId,
+    title,
+    position,
+  };
+  if (laneId) insertData.lane_id = laneId;
 
   const { data, error } = await supabase
     .from('columns')
-    .insert({ board_id: boardId, title, position })
+    .insert(insertData)
     .select()
     .single();
 

@@ -139,7 +139,7 @@ export interface Database {
           },
         ];
       };
-      columns: {
+      lanes: {
         Row: {
           id: string;
           board_id: string;
@@ -162,10 +162,51 @@ export interface Database {
         };
         Relationships: [
           {
+            foreignKeyName: 'lanes_board_id_fkey';
+            columns: ['board_id'];
+            isOneToOne: false;
+            referencedRelation: 'boards';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      columns: {
+        Row: {
+          id: string;
+          board_id: string;
+          lane_id: string | null;
+          title: string;
+          position: number;
+          created_at: string;
+          updated_at: string;
+          archived_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          board_id: string;
+          lane_id?: string | null;
+          title: string;
+          position: number;
+        };
+        Update: {
+          title?: string;
+          position?: number;
+          lane_id?: string | null;
+          archived_at?: string | null;
+        };
+        Relationships: [
+          {
             foreignKeyName: 'columns_board_id_fkey';
             columns: ['board_id'];
             isOneToOne: false;
             referencedRelation: 'boards';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'columns_lane_id_fkey';
+            columns: ['lane_id'];
+            isOneToOne: false;
+            referencedRelation: 'lanes';
             referencedColumns: ['id'];
           },
         ];

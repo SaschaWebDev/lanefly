@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import styles from './add-column.module.css';
 
 interface AddColumnProps {
-  onAdd: (title: string) => void;
+  onAdd: (title: string, laneId?: string) => void;
+  laneId?: string;
 }
 
-export function AddColumn({ onAdd }: AddColumnProps) {
+export function AddColumn({ onAdd, laneId }: AddColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,7 +23,7 @@ export function AddColumn({ onAdd }: AddColumnProps) {
       e.preventDefault();
       const trimmed = title.trim();
       if (!trimmed) return;
-      onAdd(trimmed);
+      onAdd(trimmed, laneId);
       setTitle('');
       inputRef.current?.focus();
     },

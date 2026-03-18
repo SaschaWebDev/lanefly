@@ -15,9 +15,33 @@ async function restoreColumn({ boardId, columnId }: RestoreColumnInput) {
     return;
   }
 
+  // Check if the column's lane is archived — if so, clear lane_id
+  const { data: col, error: fetchErr } = await supabase
+    .from('columns')
+    .select('lane_id')
+    .eq('id', columnId)
+    .single();
+
+  if (fetchErr) handleSupabaseError(fetchErr);
+
+  let clearLaneId = false;
+  if (col.lane_id) {
+    const { data: lane, error: laneErr } = await supabase
+      .from('lanes')
+      .select('archived_at')
+      .eq('id', col.lane_id)
+      .single();
+
+    if (laneErr) handleSupabaseError(laneErr);
+    if (lane.archived_at) clearLaneId = true;
+  }
+
+  const updateData: { archived_at: null; lane_id?: null } = { archived_at: null };
+  if (clearLaneId) updateData.lane_id = null;
+
   const { error: colErr } = await supabase
     .from('columns')
-    .update({ archived_at: null })
+    .update(updateData)
     .eq('id', columnId);
 
   if (colErr) handleSupabaseError(colErr);

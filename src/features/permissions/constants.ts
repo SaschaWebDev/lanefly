@@ -5,6 +5,9 @@ export const ROLE_PERMISSIONS: Record<BoardRole, ReadonlySet<Permission>> = {
     'board:update',
     'board:delete',
     'board:manage_members',
+    'lane:create',
+    'lane:update',
+    'lane:delete',
     'column:create',
     'column:update',
     'column:delete',
@@ -19,6 +22,8 @@ export const ROLE_PERMISSIONS: Record<BoardRole, ReadonlySet<Permission>> = {
     'attachment:delete',
   ]),
   editor: new Set<Permission>([
+    'lane:create',
+    'lane:update',
     'column:create',
     'column:update',
     'column:reorder',

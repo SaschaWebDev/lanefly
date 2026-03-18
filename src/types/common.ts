@@ -12,6 +12,7 @@ export type UpdateDto<T extends keyof Database['public']['Tables']> =
 export type Profile = Tables<'profiles'>;
 export type Board = Tables<'boards'>;
 export type BoardMember = Tables<'board_members'>;
+export type Lane = Tables<'lanes'>;
 export type Column = Tables<'columns'>;
 export type Card = Tables<'cards'>;
 export type Label = Tables<'labels'>;

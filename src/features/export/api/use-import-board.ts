@@ -19,7 +19,12 @@ export function useImportBoardMutation() {
     },
     onSuccess: (data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ['columns', variables.boardId] });
-      toast(`Imported ${data.columns} columns and ${data.cards} cards`, 'success');
+      void queryClient.invalidateQueries({ queryKey: ['lanes', variables.boardId] });
+      const parts = [];
+      if (data.lanes > 0) parts.push(`${data.lanes} lanes`);
+      parts.push(`${data.columns} columns`);
+      parts.push(`${data.cards} cards`);
+      toast(`Imported ${parts.join(', ')}`, 'success');
     },
     onError: (error: Error) => {
       toast(error.message, 'error');

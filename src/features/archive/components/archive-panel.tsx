@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { useArchivedItemsQuery } from '../api/get-archived';
+import { useRestoreLaneMutation } from '../api/restore-lane';
 import { useRestoreColumnMutation } from '../api/restore-column';
 import { useRestoreCardMutation } from '../api/restore-card';
 import { usePermanentDeleteMutation } from '../api/permanent-delete';
@@ -17,13 +18,17 @@ interface ArchivePanelProps {
 export function ArchivePanel({ boardId, role, open, onClose }: ArchivePanelProps) {
   const { can } = usePermission(role);
   const { data } = useArchivedItemsQuery(open ? boardId : undefined);
+  const restoreLane = useRestoreLaneMutation();
   const restoreColumn = useRestoreColumnMutation();
   const restoreCard = useRestoreCardMutation();
   const permanentDelete = usePermanentDeleteMutation();
 
   if (!open) return null;
 
-  const hasItems = (data?.columns.length ?? 0) > 0 || (data?.cards.length ?? 0) > 0;
+  const hasItems =
+    (data?.lanes.length ?? 0) > 0 ||
+    (data?.columns.length ?? 0) > 0 ||
+    (data?.cards.length ?? 0) > 0;
 
   return createPortal(
     <>
@@ -37,6 +42,33 @@ export function ArchivePanel({ boardId, role, open, onClose }: ArchivePanelProps
         </div>
         <div className={styles.content}>
           {!hasItems && <p className={styles.empty}>No archived items</p>}
+
+          {data?.lanes && data.lanes.length > 0 && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>Lanes</h3>
+              {data.lanes.map((lane) => (
+                <div key={lane.id} className={styles.item}>
+                  <span className={styles.itemTitle}>{lane.title}</span>
+                  <div className={styles.itemActions}>
+                    <button
+                      className={styles.restoreButton}
+                      onClick={() => restoreLane.mutate({ boardId, laneId: lane.id })}
+                    >
+                      Restore
+                    </button>
+                    {can('board:delete') && (
+                      <button
+                        className={styles.deleteButton}
+                        onClick={() => permanentDelete.mutate({ boardId, type: 'lane', id: lane.id })}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {data?.columns && data.columns.length > 0 && (
             <div className={styles.section}>
