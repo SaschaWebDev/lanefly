@@ -3,6 +3,7 @@ import { isDemoMode } from '@/config/demo';
 import { supabase } from '@/config/supabase';
 import { handleSupabaseError } from '@/lib/api-client';
 import { createDemoCard } from '@/features/columns/api/demo-store';
+import type { CardStatus } from '@/types/database';
 import type { ColumnWithCards } from '@/features/columns/types';
 
 interface CreateCardInput {
@@ -10,16 +11,29 @@ interface CreateCardInput {
   columnId: string;
   title: string;
   position: number;
+  description?: string | null;
+  status?: CardStatus;
+  assignee_id?: string | null;
+  due_date?: string | null;
 }
 
-async function createCard({ boardId, columnId, title, position }: CreateCardInput) {
+async function createCard({ boardId, columnId, title, position, description, status, assignee_id, due_date }: CreateCardInput) {
   if (isDemoMode) {
     return createDemoCard(boardId, columnId, title, position);
   }
 
   const { data, error } = await supabase
     .from('cards')
-    .insert({ board_id: boardId, column_id: columnId, title, position })
+    .insert({
+      board_id: boardId,
+      column_id: columnId,
+      title,
+      position,
+      ...(description != null && { description }),
+      ...(status != null && { status }),
+      ...(assignee_id != null && { assignee_id }),
+      ...(due_date != null && { due_date }),
+    })
     .select()
     .single();
 
@@ -57,10 +71,10 @@ export function useCreateCardMutation() {
                   column_id: variables.columnId,
                   title: variables.title,
                   position: variables.position,
-                  description: null,
-                  status: 'active' as const,
-                  assignee_id: null,
-                  due_date: null,
+                  description: variables.description ?? null,
+                  status: variables.status ?? 'active',
+                  assignee_id: variables.assignee_id ?? null,
+                  due_date: variables.due_date ?? null,
                   created_at: now,
                   updated_at: now,
                   archived_at: null,

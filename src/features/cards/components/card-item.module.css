@@ -2,7 +2,7 @@
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-1) var(--space-3);
   cursor: pointer;
   transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
   position: relative;
@@ -13,11 +13,27 @@
   box-shadow: var(--shadow-sm);
 }
 
+.card:hover .contextMenu {
+  opacity: 1;
+}
+
+.selected {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+}
+
 .title {
   font-size: var(--text-sm);
   color: var(--color-text);
   line-height: var(--leading-normal);
   word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
 .meta {
@@ -26,6 +42,10 @@
   gap: var(--space-2);
   margin-top: var(--space-2);
   flex-wrap: wrap;
+}
+
+.meta:empty {
+  display: none;
 }
 
 .dueDate {
@@ -38,26 +58,72 @@
   color: var(--color-error);
 }
 
-.todoToggle {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
+.labels {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-1);
+}
+
+.labelDot {
+  display: inline-block;
+  width: 32px;
+  height: 6px;
+  border-radius: var(--radius-full);
+}
+
+.checklistBadge {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.checklistBadgeDone {
+  composes: checklistBadge;
+  color: var(--color-success);
+}
+
+.assigneeBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 20px;
   height: 20px;
   border-radius: var(--radius-full);
-  border: 2px dotted var(--color-gray-300);
+  background-color: var(--color-primary-bg-hover);
+  color: var(--color-primary-700);
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  margin-left: auto;
+}
+
+.todoToggle {
+  flex-shrink: 0;
+  height: 20px;
+  width: 0;
+  border-radius: var(--radius-full);
+  border: 0px dotted var(--color-gray-300);
+  background: none;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   color: var(--color-text-tertiary);
   opacity: 0;
-  transition: opacity var(--transition-fast);
+  overflow: hidden;
   cursor: pointer;
+  transition: width var(--transition-fast), opacity var(--transition-fast),
+    border-width var(--transition-fast), margin-right var(--transition-fast);
 }
 
 .card:hover .todoToggle {
+  width: 20px;
+  border-width: 2px;
   opacity: 1;
+  margin-right: var(--space-2);
 }
 
 .todoToggleDone {
@@ -67,16 +133,23 @@
   background-color: var(--color-success);
   color: white;
   opacity: 1;
+  width: 20px;
+  border-width: 2px;
+  margin-right: var(--space-2);
+}
+
+.contextMenu {
+  flex-shrink: 0;
+  margin-left: var(--space-2);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.contextMenu button {
+  opacity: 1;
 }
 
 .dragging {
   opacity: 0.5;
   box-shadow: var(--shadow-lg);
-}
-
-.labels {
-  display: flex;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-1);
 }

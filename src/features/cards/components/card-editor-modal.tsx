@@ -1,12 +1,19 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { SafeHtml } from '@/components/ui/safe-html';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { DatePicker } from '@/components/ui/date-picker';
+import { MarkdownEditor, markdownToHtml } from '@/components/ui/markdown-editor';
+import { MemberPicker } from '@/features/members/components/member-picker';
+import { LabelPicker } from '@/features/labels/components/label-picker';
+import { ChecklistSection } from './checklist';
+import { CommentFeed } from '@/features/comments/components/comment-feed';
+import { ActivityFeed } from '@/features/activity/components/activity-feed';
 import { useUpdateCardMutation } from '../api/update-card';
 import { useDeleteCardMutation } from '../api/delete-card';
 import { usePermanentDeleteMutation } from '@/features/archive/api/permanent-delete';
+import { useCardQuery } from '../api/get-card';
 import type { Card } from '@/types/common';
 import type { BoardRole } from '@/types/database';
 import { usePermission } from '@/features/permissions/hooks/use-permission';
@@ -26,10 +33,16 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
   const deleteCard = useDeleteCardMutation();
   const permanentDelete = usePermanentDeleteMutation();
 
+  // Fetch full card detail for labels/checklists
+  const { data: cardDetail } = useCardQuery(open ? card.id : undefined);
+
   const [title, setTitle] = useState(card.title);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [description, setDescription] = useState(card.description ?? '');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
+  const [showLabels, setShowLabels] = useState(false);
+  const [showAssignee, setShowAssignee] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -60,11 +73,12 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
 
   const handleDescSave = useCallback(() => {
     setIsEditingDesc(false);
+    const html = markdownToHtml(description);
     if (description !== (card.description ?? '')) {
       updateCard.mutate({
         boardId,
         cardId: card.id,
-        description: description || null,
+        description: description ? html : null,
       });
     }
   }, [description, card.description, card.id, boardId, updateCard]);
@@ -82,6 +96,21 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
     onClose();
   }, [boardId, card.id, deleteCard, onClose]);
 
+  const handleDueDateChange = useCallback(
+    (date: string | null) => {
+      updateCard.mutate({ boardId, cardId: card.id, due_date: date });
+    },
+    [boardId, card.id, updateCard],
+  );
+
+  const handleAssigneeChange = useCallback(
+    (userId: string | null) => {
+      updateCard.mutate({ boardId, cardId: card.id, assignee_id: userId });
+      setShowAssignee(false);
+    },
+    [boardId, card.id, updateCard],
+  );
+
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(e: KeyboardEvent) {
@@ -92,6 +121,8 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const activeLabelIds = cardDetail?.labels?.map((l) => l.id) ?? [];
 
   const modal = createPortal(
     <div className={styles.overlay} onClick={onClose} role="presentation">
@@ -123,29 +154,32 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
           </button>
         </div>
 
+        {/* Labels display */}
+        {cardDetail?.labels && cardDetail.labels.length > 0 && (
+          <div className={styles.labelsRow}>
+            {cardDetail.labels.map((l) => (
+              <span key={l.id} className={styles.labelBadge} style={{ backgroundColor: l.color }}>
+                {l.name}
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className={styles.body}>
           <div className={styles.main}>
+            {/* Description */}
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>Description</h3>
               {isEditingDesc && can('card:update') ? (
-                <div>
-                  <Textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Add a more detailed description..."
-                    autoResize
-                    autoFocus
-                  />
-                  <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
-                    <Button size="sm" onClick={handleDescSave}>Save</Button>
-                    <Button size="sm" variant="ghost" onClick={() => {
-                      setIsEditingDesc(false);
-                      setDescription(card.description ?? '');
-                    }}>
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
+                <MarkdownEditor
+                  value={description}
+                  onChange={setDescription}
+                  onSave={handleDescSave}
+                  onCancel={() => {
+                    setIsEditingDesc(false);
+                    setDescription(card.description ?? '');
+                  }}
+                />
               ) : (
                 <div
                   className={styles.description}
@@ -159,9 +193,30 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
                 </div>
               )}
             </div>
+
+            {/* Checklists */}
+            <ChecklistSection
+              cardId={card.id}
+              boardId={boardId}
+              canEdit={can('card:update')}
+            />
+
+            {/* Comments */}
+            <CommentFeed
+              cardId={card.id}
+              boardId={boardId}
+              canComment={can('card:update')}
+            />
+
+            {/* Activity */}
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>Activity</h3>
+              <ActivityFeed cardId={card.id} />
+            </div>
           </div>
 
           <div className={styles.sidebar}>
+            {/* Status */}
             <div className={styles.sidebarSection}>
               <span className={styles.sidebarLabel}>Status</span>
               <button
@@ -172,18 +227,75 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
               </button>
             </div>
 
-            {card.due_date && (
-              <div className={styles.sidebarSection}>
-                <span className={styles.sidebarLabel}>Due date</span>
+            {/* Due Date */}
+            <div className={styles.sidebarSection}>
+              <span className={styles.sidebarLabel}>Due date</span>
+              {can('card:update') ? (
+                <DatePicker
+                  value={card.due_date}
+                  onChange={handleDueDateChange}
+                />
+              ) : (
                 <span style={{ fontSize: 'var(--text-sm)' }}>
-                  {new Date(card.due_date).toLocaleDateString()}
+                  {card.due_date
+                    ? new Date(card.due_date).toLocaleDateString()
+                    : 'None'}
                 </span>
-              </div>
-            )}
+              )}
+            </div>
 
+            {/* Assignee */}
+            <div className={styles.sidebarSection}>
+              <span className={styles.sidebarLabel}>Assignee</span>
+              {can('card:update') ? (
+                <>
+                  <button
+                    className={styles.sidebarButton}
+                    onClick={() => setShowAssignee(!showAssignee)}
+                  >
+                    {card.assignee_id ? 'Change' : 'Assign member'}
+                  </button>
+                  {showAssignee && (
+                    <MemberPicker
+                      boardId={boardId}
+                      selectedUserId={card.assignee_id}
+                      onSelect={handleAssigneeChange}
+                    />
+                  )}
+                </>
+              ) : (
+                <span style={{ fontSize: 'var(--text-sm)' }}>
+                  {card.assignee_id ? 'Assigned' : 'Unassigned'}
+                </span>
+              )}
+            </div>
+
+            {/* Labels */}
+            <div className={styles.sidebarSection}>
+              <span className={styles.sidebarLabel}>Labels</span>
+              {can('card:update') ? (
+                <>
+                  <button
+                    className={styles.sidebarButton}
+                    onClick={() => setShowLabels(!showLabels)}
+                  >
+                    {showLabels ? 'Hide labels' : 'Edit labels'}
+                  </button>
+                  {showLabels && (
+                    <LabelPicker
+                      boardId={boardId}
+                      cardId={card.id}
+                      activeLabelIds={activeLabelIds}
+                    />
+                  )}
+                </>
+              ) : null}
+            </div>
+
+            {/* Danger zone */}
             {can('card:delete') && (
               <div className={styles.sidebarSection}>
-                <Button variant="danger" size="sm" onClick={handleDelete} fullWidth>
+                <Button variant="danger" size="sm" onClick={() => setShowArchiveConfirm(true)} fullWidth>
                   Archive
                 </Button>
                 <Button
@@ -206,6 +318,18 @@ export function CardEditorModal({ card, boardId, role, open, onClose }: CardEdit
   return (
     <>
       {modal}
+      <ConfirmDialog
+        open={showArchiveConfirm}
+        title="Archive card"
+        message={`Are you sure you want to archive "${card.title}"?`}
+        variant="danger"
+        confirmLabel="Archive"
+        onConfirm={() => {
+          handleDelete();
+          setShowArchiveConfirm(false);
+        }}
+        onCancel={() => setShowArchiveConfirm(false)}
+      />
       <ConfirmDialog
         open={showDeleteConfirm}
         title="Delete card"
