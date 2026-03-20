@@ -77,6 +77,11 @@
   color: var(--color-star);
 }
 
+.filterActive {
+  color: var(--color-primary-500);
+  background-color: var(--color-primary-bg);
+}
+
 @media (max-width: 768px) {
   .header {
     padding: var(--space-2) var(--space-4);

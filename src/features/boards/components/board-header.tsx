@@ -13,9 +13,12 @@ import styles from './board-header.module.css';
 interface BoardHeaderProps {
   board: BoardWithRole;
   onUpdateTitle: (title: string) => void;
+  showFilters?: boolean;
+  onToggleFilters?: () => void;
+  hasActiveFilters?: boolean;
 }
 
-export function BoardHeader({ board, onUpdateTitle }: BoardHeaderProps) {
+export function BoardHeader({ board, onUpdateTitle, showFilters, onToggleFilters, hasActiveFilters }: BoardHeaderProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { can } = usePermission(board.role);
@@ -91,6 +94,17 @@ export function BoardHeader({ board, onUpdateTitle }: BoardHeaderProps) {
         )}
 
         <SearchBar boardId={board.id} />
+
+        {onToggleFilters && (
+          <button
+            className={`${styles.backButton}${hasActiveFilters ? ` ${styles.filterActive}` : ''}`}
+            onClick={onToggleFilters}
+            aria-label="Toggle filters"
+            title="Filter"
+          >
+            &#9776;
+          </button>
+        )}
 
         {can('board:update') && (
           <ExportMenu boardId={board.id} />

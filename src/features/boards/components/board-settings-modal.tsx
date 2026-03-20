@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { useUpdateBoardMutation } from '../api/update-board';
 import { useDeleteBoardMutation } from '../api/delete-board';
+import { useDuplicateBoardMutation } from '../api/duplicate-board';
 import { useBoardMembersQuery } from '@/features/members/api/get-board-members';
 import { useUpdateMemberRoleMutation } from '@/features/members/api/update-member-role';
 import { useRemoveMemberMutation } from '@/features/members/api/remove-member';
@@ -29,12 +30,15 @@ export function BoardSettingsModal({ board, open, onClose }: BoardSettingsModalP
   const navigate = useNavigate();
   const updateBoard = useUpdateBoardMutation();
   const deleteBoard = useDeleteBoardMutation();
+  const duplicateBoard = useDuplicateBoardMutation();
   const { data: members } = useBoardMembersQuery(board.id);
   const updateRole = useUpdateMemberRoleMutation();
   const removeMember = useRemoveMemberMutation();
 
   const [title, setTitle] = useState(board.title);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
+  const [includeCards, setIncludeCards] = useState(false);
 
   const handleSaveTitle = useCallback(() => {
     const trimmed = title.trim();
@@ -55,6 +59,18 @@ export function BoardSettingsModal({ board, open, onClose }: BoardSettingsModalP
     onClose();
     void navigate({ to: '/' });
   }, [board.id, deleteBoard, onClose, navigate]);
+
+  const handleDuplicateBoard = useCallback(() => {
+    duplicateBoard.mutate(
+      { boardId: board.id, includeCards },
+      {
+        onSuccess: (newBoardId) => {
+          onClose();
+          void navigate({ to: '/boards/$boardId', params: { boardId: newBoardId } });
+        },
+      },
+    );
+  }, [board.id, includeCards, duplicateBoard, onClose, navigate]);
 
   const handleRoleChange = useCallback(
     (memberId: string, role: BoardRole) => {
@@ -128,7 +144,7 @@ export function BoardSettingsModal({ board, open, onClose }: BoardSettingsModalP
                     </select>
                     <button
                       className={styles.removeButton}
-                      onClick={() => handleRemoveMember(member.id)}
+                      onClick={() => setMemberToRemove(member.id)}
                     >
                       Remove
                     </button>
@@ -137,6 +153,28 @@ export function BoardSettingsModal({ board, open, onClose }: BoardSettingsModalP
               </div>
             </div>
           )}
+
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>Duplicate Board</h3>
+            <p className={styles.hint}>
+              Create a copy of this board with all lanes, columns, and labels.
+            </p>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={includeCards}
+                onChange={(e) => setIncludeCards(e.target.checked)}
+              />
+              Include cards
+            </label>
+            <Button
+              variant="secondary"
+              onClick={handleDuplicateBoard}
+              loading={duplicateBoard.isPending}
+            >
+              Duplicate Board
+            </Button>
+          </div>
 
           <div className={`${styles.section} ${styles.dangerZone}`}>
             <h3 className={styles.sectionTitle}>Danger Zone</h3>
@@ -149,6 +187,19 @@ export function BoardSettingsModal({ board, open, onClose }: BoardSettingsModalP
           </div>
         </div>
       </Modal>
+
+      <ConfirmDialog
+        open={memberToRemove !== null}
+        title="Remove member"
+        message="Are you sure you want to remove this member from the board?"
+        variant="danger"
+        confirmLabel="Remove"
+        onConfirm={() => {
+          if (memberToRemove) handleRemoveMember(memberToRemove);
+          setMemberToRemove(null);
+        }}
+        onCancel={() => setMemberToRemove(null)}
+      />
 
       <ConfirmDialog
         open={showDeleteConfirm}
