@@ -1,4 +1,5 @@
-import type { Card, Column } from '@/types/common';
+import type { Card, Column, Lane } from '@/types/common';
+import { getDemoArchivedLanes } from '@/features/lanes/api/demo-store';
 import type { ColumnWithCards } from '../types';
 
 let nextColNum = 1;
@@ -232,6 +233,23 @@ export function getDemoArchivedColumns(boardId: string): Column[] {
   return cols
     .filter((c) => c.archived_at !== null)
     .map(({ cards: _cards, ...col }) => col);
+}
+
+export function getDemoArchivedColumnsWithCounts(boardId: string): Array<Column & { cardCount: number }> {
+  const cols = demoColumnStore.get(boardId);
+  if (!cols) return [];
+  return cols
+    .filter((c) => c.archived_at !== null)
+    .map(({ cards, ...col }) => ({ ...col, cardCount: cards.length }));
+}
+
+export function getDemoArchivedLanesWithCounts(boardId: string): Array<Lane & { columnCount: number }> {
+  const lanes = getDemoArchivedLanes(boardId);
+  const cols = demoColumnStore.get(boardId) ?? [];
+  return lanes.map((lane) => ({
+    ...lane,
+    columnCount: cols.filter((c) => c.lane_id === lane.id).length,
+  }));
 }
 
 export function getDemoArchivedCards(boardId: string): Card[] {

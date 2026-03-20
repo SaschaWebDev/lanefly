@@ -71,12 +71,28 @@
   font-size: var(--text-sm);
 }
 
-.itemTitle {
+.itemContent {
   flex: 1;
   min-width: 0;
+}
+
+.itemTitle {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.itemInfo {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+.emptySection {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  padding: var(--space-2) var(--space-3);
 }
 
 .itemActions {
