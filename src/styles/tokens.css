@@ -60,6 +60,8 @@
   --space-16: 4rem;
   --space-20: 5rem;
 
+  --lane-min-height: 200px;
+
   /* Border Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
