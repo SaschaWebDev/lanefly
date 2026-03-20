@@ -47,7 +47,7 @@ export function AddColumn({ onAdd, laneId }: AddColumnProps) {
   if (!isEditing) {
     return (
       <button className={styles.trigger} onClick={() => setIsEditing(true)}>
-        + Add another list
+        +
       </button>
     );
   }

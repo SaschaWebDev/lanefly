@@ -1,20 +1,22 @@
 .trigger {
   width: 48px;
-  align-self: stretch;
-  min-height: 80px;
+  height: 200px;
   writing-mode: vertical-lr;
   transform: rotate(180deg);
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  border-radius: var(--radius-xl);
-  background-color: var(--color-subtle-bg);
+  font-size: 28px;
+  font-weight: var(--font-light);
+  line-height: 1;
   color: var(--color-text-secondary);
-  transition: background-color var(--transition-fast);
+  background-color: var(--color-subtle-bg);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .trigger:hover {
@@ -24,31 +26,31 @@
 
 .formWrapper {
   position: relative;
-  width: 48px;
-  align-self: stretch;
   flex-shrink: 0;
 }
 
 .formTriggerActive {
-  width: 100%;
-  height: 100%;
-  min-height: 80px;
+  width: 48px;
+  height: 200px;
   writing-mode: vertical-lr;
   transform: rotate(180deg);
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  border-radius: var(--radius-xl);
-  background-color: var(--color-subtle-bg-hover);
+  font-size: 28px;
+  font-weight: var(--font-light);
+  line-height: 1;
   color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--color-subtle-bg-hover);
 }
 
 .form {
   position: absolute;
-  left: calc(100% + var(--space-2));
-  top: var(--space-2);
+  left: calc(48px + var(--space-2));
+  top: 0;
   z-index: 10;
   width: 220px;
   padding: var(--space-3);

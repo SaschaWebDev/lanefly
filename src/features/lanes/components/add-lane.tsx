@@ -59,14 +59,14 @@ export function AddLane({ onAdd }: AddLaneProps) {
   if (!isEditing) {
     return (
       <button className={styles.trigger} onClick={() => setIsEditing(true)}>
-        + Add lane
+        +
       </button>
     );
   }
 
   return (
     <div className={styles.formWrapper} ref={formRef}>
-      <div className={styles.formTriggerActive}>+ Add lane</div>
+      <div className={styles.formTriggerActive}>+</div>
       <form className={styles.form} onSubmit={handleSubmit}>
         <input
           ref={inputRef}

@@ -1,13 +1,18 @@
 .trigger {
   width: 272px;
   min-width: 272px;
-  padding: var(--space-3);
+  height: 40px;
+  padding: 0;
   border-radius: var(--radius-xl);
   background-color: var(--color-subtle-bg);
   color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  text-align: left;
+  font-size: 28px;
+  font-weight: var(--font-light);
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color var(--transition-fast);
   cursor: pointer;
 }
