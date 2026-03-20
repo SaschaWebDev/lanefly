@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LaneFly Logo Kit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      body {
+        font-family: 'Outfit', sans-serif;
+        background-color: #f8fafc;
+      }
+      .logo-container {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .logo-container:hover {
+        transform: translateY(-4px);
+        box-shadow:
+          0 10px 25px -5px rgba(0, 0, 0, 0.1),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      }
+      /* Custom scrollbar for code blocks */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1e293b;
+        rounded: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800 min-h-screen p-6 md:p-12">
+    <header class="max-w-6xl mx-auto mb-12">
+      <div class="flex items-center gap-3 mb-2">
+        <div
+          class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-200"
+        >
+          <i data-lucide="feather" class="w-5 h-5"></i>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+          LaneFly <span class="text-slate-400 font-medium">Brand Kit</span>
+        </h1>
+      </div>
+      <p class="text-slate-500 text-lg max-w-2xl">
+        A clever and elegant vector identity tailored for your Kanban and
+        swimlane application. The design merges structural board columns with
+        horizontal swimlane indicators, culminating in a dynamic card taking
+        flight.
+      </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Primary Logo Mark -->
+      <div
+        class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm logo-container flex flex-col justify-between"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Primary Icon</h2>
+            <p class="text-sm text-slate-500">
+              Perfect for favicons, app icons, and mobile headers.
+            </p>
+          </div>
+          <span
+            class="bg-orange-50 text-orange-700 text-xs px-3 py-1 rounded-full font-semibold"
+            >SVG</span
+          >
+        </div>
+
+        <div
+          class="flex-grow flex items-center justify-center py-12 bg-slate-50 rounded-2xl mb-6 relative overflow-hidden"
+        >
+          <!-- Grid background for scale -->
+          <div
+            class="absolute inset-0 opacity-[0.03]"
+            style="
+              background-image: radial-gradient(#000 1px, transparent 1px);
+              background-size: 20px 20px;
+            "
+          ></div>
+
+          <!-- THE SVG LOGO MARK -->
+          <svg
+            id="svg-primary"
+            viewBox="0 0 120 120"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-32 h-32 drop-shadow-xl relative z-10"
+          >
+            <defs>
+              <linearGradient id="gradCol1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ea580c" />
+                <stop offset="100%" stop-color="#c2410c" />
+              </linearGradient>
+              <linearGradient id="gradCol2" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f97316" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+              <linearGradient id="gradCol3" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fb923c" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+              <linearGradient id="gradFly" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fbbf24" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow
+                  dx="3"
+                  dy="5"
+                  stdDeviation="4"
+                  flood-color="#0f172a"
+                  flood-opacity="0.2"
+                />
+              </filter>
+            </defs>
+
+            <!-- Horizontal Swimlanes -->
+            <line
+              x1="12"
+              y1="45"
+              x2="108"
+              y2="45"
+              stroke="#cbd5e1"
+              stroke-width="2.5"
+              stroke-dasharray="6 6"
+              stroke-linecap="round"
+              opacity="0.8"
+            />
+            <line
+              x1="12"
+              y1="85"
+              x2="108"
+              y2="85"
+              stroke="#cbd5e1"
+              stroke-width="2.5"
+              stroke-dasharray="6 6"
+              stroke-linecap="round"
+              opacity="0.8"
+            />
+
+            <!-- Kanban Columns -->
+            <rect
+              x="22"
+              y="25"
+              width="20"
+              height="70"
+              rx="6"
+              fill="url(#gradCol1)"
+            />
+            <rect
+              x="50"
+              y="50"
+              width="20"
+              height="45"
+              rx="6"
+              fill="url(#gradCol2)"
+            />
+            <rect
+              x="78"
+              y="70"
+              width="20"
+              height="25"
+              rx="6"
+              fill="url(#gradCol3)"
+            />
+
+            <!-- Flying Card -->
+            <g transform="rotate(22, 85, 25)" filter="url(#shadow)">
+              <rect
+                x="70"
+                y="5"
+                width="24"
+                height="28"
+                rx="6"
+                fill="url(#gradFly)"
+              />
+              <!-- Subtle lines on card representing tasks -->
+              <path
+                d="M 76 13 L 88 13 M 76 21 L 84 21"
+                stroke="#ffffff"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                opacity="0.8"
+              />
+            </g>
+          </svg>
+        </div>
+
+        <button
+          onclick="copyCode('svg-primary', this)"
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        >
+          <i data-lucide="copy" class="w-4 h-4"></i> Copy SVG Code
+        </button>
+      </div>
+
+      <!-- Horizontal Lockup (Icon + Text) -->
+      <div
+        class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm logo-container flex flex-col justify-between"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800">Full Logo Lockup</h2>
+            <p class="text-sm text-slate-500">
+              Includes typography. Best for navbars.
+            </p>
+          </div>
+          <span
+            class="bg-orange-50 text-orange-700 text-xs px-3 py-1 rounded-full font-semibold"
+            >SVG</span
+          >
+        </div>
+
+        <div
+          class="flex-grow flex items-center justify-center py-12 bg-slate-50 rounded-2xl mb-6 px-4"
+        >
+          <svg
+            id="svg-lockup"
+            viewBox="0 0 400 120"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-full h-auto drop-shadow-md"
+          >
+            <!-- Include same defs for the icon part -->
+            <defs>
+              <linearGradient
+                id="gradCol1-lockup"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#ea580c" />
+                <stop offset="100%" stop-color="#c2410c" />
+              </linearGradient>
+              <linearGradient
+                id="gradCol2-lockup"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#f97316" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+              <linearGradient
+                id="gradCol3-lockup"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#fb923c" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+              <linearGradient
+                id="gradFly-lockup"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#fbbf24" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+              <filter
+                id="shadow-lockup"
+                x="-20%"
+                y="-20%"
+                width="140%"
+                height="140%"
+              >
+                <feDropShadow
+                  dx="3"
+                  dy="5"
+                  stdDeviation="4"
+                  flood-color="#0f172a"
+                  flood-opacity="0.2"
+                />
+              </filter>
+              <!-- Inter font definition for SVG -->
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&amp;display=swap');
+                .logo-text {
+                  font-family: 'Outfit', sans-serif;
+                }
+              </style>
+            </defs>
+
+            <g transform="translate(10, 10) scale(0.8)">
+              <!-- Swimlanes -->
+              <line
+                x1="12"
+                y1="45"
+                x2="108"
+                y2="45"
+                stroke="#cbd5e1"
+                stroke-width="2.5"
+                stroke-dasharray="6 6"
+                stroke-linecap="round"
+                opacity="0.8"
+              />
+              <line
+                x1="12"
+                y1="85"
+                x2="108"
+                y2="85"
+                stroke="#cbd5e1"
+                stroke-width="2.5"
+                stroke-dasharray="6 6"
+                stroke-linecap="round"
+                opacity="0.8"
+              />
+              <!-- Columns -->
+              <rect
+                x="22"
+                y="25"
+                width="20"
+                height="70"
+                rx="6"
+                fill="url(#gradCol1-lockup)"
+              />
+              <rect
+                x="50"
+                y="50"
+                width="20"
+                height="45"
+                rx="6"
+                fill="url(#gradCol2-lockup)"
+              />
+              <rect
+                x="78"
+                y="70"
+                width="20"
+                height="25"
+                rx="6"
+                fill="url(#gradCol3-lockup)"
+              />
+              <!-- Flying Card -->
+              <g transform="rotate(22, 85, 25)" filter="url(#shadow-lockup)">
+                <rect
+                  x="70"
+                  y="5"
+                  width="24"
+                  height="28"
+                  rx="6"
+                  fill="url(#gradFly-lockup)"
+                />
+                <path
+                  d="M 76 13 L 88 13 M 76 21 L 84 21"
+                  stroke="#ffffff"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  opacity="0.8"
+                />
+              </g>
+            </g>
+
+            <!-- Typography -->
+            <text
+              x="125"
+              y="76"
+              class="logo-text"
+              font-size="52"
+              font-weight="800"
+              fill="#0f172a"
+              letter-spacing="-1.5"
+            >
+              Lane
+              <tspan fill="#f97316">Fly</tspan>
+            </text>
+          </svg>
+        </div>
+
+        <button
+          onclick="copyCode('svg-lockup', this)"
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        >
+          <i data-lucide="copy" class="w-4 h-4"></i> Copy SVG Code
+        </button>
+      </div>
+
+      <!-- Dark Mode Logo -->
+      <div
+        class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl logo-container flex flex-col justify-between"
+      >
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-white">Dark Mode Lockup</h2>
+            <p class="text-sm text-slate-400">Optimized for dark UI themes.</p>
+          </div>
+          <span
+            class="bg-orange-900/50 text-orange-300 text-xs px-3 py-1 rounded-full font-semibold border border-orange-800"
+            >SVG</span
+          >
+        </div>
+
+        <div
+          class="flex-grow flex items-center justify-center py-12 bg-slate-800/50 rounded-2xl mb-6 px-4 border border-slate-700/50"
+        >
+          <svg
+            id="svg-dark"
+            viewBox="0 0 400 120"
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-full h-auto"
+          >
+            <!-- Reuse the identical structure, just changing the text color and swimlane colors -->
+            <defs>
+              <linearGradient
+                id="gradCol1-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#fb923c" />
+                <stop offset="100%" stop-color="#ea580c" />
+              </linearGradient>
+              <linearGradient
+                id="gradCol2-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#fdba74" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+              <linearGradient
+                id="gradCol3-dark"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#ffedd5" />
+                <stop offset="100%" stop-color="#fb923c" />
+              </linearGradient>
+              <linearGradient
+                id="gradFly-dark"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#f59e0b" />
+              </linearGradient>
+              <filter
+                id="shadow-dark"
+                x="-20%"
+                y="-20%"
+                width="140%"
+                height="140%"
+              >
+                <feDropShadow
+                  dx="3"
+                  dy="5"
+                  stdDeviation="4"
+                  flood-color="#000000"
+                  flood-opacity="0.4"
+                />
+              </filter>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&amp;display=swap');
+                .logo-text {
+                  font-family: 'Outfit', sans-serif;
+                }
+              </style>
+            </defs>
+
+            <g transform="translate(10, 10) scale(0.8)">
+              <!-- Swimlanes (Lighter for dark mode) -->
+              <line
+                x1="12"
+                y1="45"
+                x2="108"
+                y2="45"
+                stroke="#475569"
+                stroke-width="2.5"
+                stroke-dasharray="6 6"
+                stroke-linecap="round"
+              />
+              <line
+                x1="12"
+                y1="85"
+                x2="108"
+                y2="85"
+                stroke="#475569"
+                stroke-width="2.5"
+                stroke-dasharray="6 6"
+                stroke-linecap="round"
+              />
+              <!-- Columns -->
+              <rect
+                x="22"
+                y="25"
+                width="20"
+                height="70"
+                rx="6"
+                fill="url(#gradCol1-dark)"
+              />
+              <rect
+                x="50"
+                y="50"
+                width="20"
+                height="45"
+                rx="6"
+                fill="url(#gradCol2-dark)"
+              />
+              <rect
+                x="78"
+                y="70"
+                width="20"
+                height="25"
+                rx="6"
+                fill="url(#gradCol3-dark)"
+              />
+              <!-- Flying Card -->
+              <g transform="rotate(22, 85, 25)" filter="url(#shadow-dark)">
+                <rect
+                  x="70"
+                  y="5"
+                  width="24"
+                  height="28"
+                  rx="6"
+                  fill="url(#gradFly-dark)"
+                />
+                <path
+                  d="M 76 13 L 88 13 M 76 21 L 84 21"
+                  stroke="#ffffff"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  opacity="0.9"
+                />
+              </g>
+            </g>
+            <!-- Typography (White text for dark mode) -->
+            <text
+              x="125"
+              y="76"
+              class="logo-text"
+              font-size="52"
+              font-weight="800"
+              fill="#ffffff"
+              letter-spacing="-1.5"
+            >
+              Lane
+              <tspan fill="#fdba74">Fly</tspan>
+            </text>
+          </svg>
+        </div>
+
+        <button
+          onclick="copyCode('svg-dark', this)"
+          class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        >
+          <i data-lucide="copy" class="w-4 h-4"></i> Copy SVG Code
+        </button>
+      </div>
+
+      <!-- Color Palette -->
+      <div
+        class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm logo-container"
+      >
+        <h2 class="text-xl font-bold text-slate-800 mb-6">Brand Palette</h2>
+        <div class="space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-xl bg-orange-600 shadow-inner"></div>
+            <div>
+              <p class="font-bold text-slate-800">Primary Orange</p>
+              <p class="text-slate-500 text-sm font-mono">
+                #EA580C &bull; rgb(234, 88, 12)
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-xl bg-amber-400 shadow-inner"></div>
+            <div>
+              <p class="font-bold text-slate-800">Flight Amber</p>
+              <p class="text-slate-500 text-sm font-mono">
+                #FBBF24 &bull; rgb(251, 191, 36)
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-xl bg-orange-500 shadow-inner"></div>
+            <div>
+              <p class="font-bold text-slate-800">Action Orange</p>
+              <p class="text-slate-500 text-sm font-mono">
+                #F97316 &bull; rgb(249, 115, 22)
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-xl bg-slate-900 shadow-inner"></div>
+            <div>
+              <p class="font-bold text-slate-800">Slate Black</p>
+              <p class="text-slate-500 text-sm font-mono">
+                #0F172A &bull; rgb(15, 23, 42)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="toast"
+      class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-[150%] transition-transform duration-300"
+    >
+      <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+      <span class="font-medium">SVG Code Copied!</span>
+    </div>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      function copyCode(svgId, buttonEl) {
+        const svgElement = document.getElementById(svgId);
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+
+        // Format lightly for better pasting
+        const cleanSvg = svgString
+          .replace(/ data-lucide=".*?"/g, '')
+          .replace(/ xmlns:lucide=".*?"/g, '');
+
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = cleanSvg;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+
+        try {
+          document.execCommand('copy');
+          showToast();
+
+          // Visual feedback on button
+          const originalText = buttonEl.innerHTML;
+          buttonEl.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+          lucide.createIcons();
+          buttonEl.classList.replace('bg-slate-900', 'bg-emerald-600');
+          buttonEl.classList.replace(
+            'hover:bg-slate-800',
+            'hover:bg-emerald-700',
+          );
+
+          setTimeout(() => {
+            buttonEl.innerHTML = originalText;
+            lucide.createIcons();
+            buttonEl.classList.replace('bg-emerald-600', 'bg-slate-900');
+            buttonEl.classList.replace(
+              'hover:bg-emerald-700',
+              'hover:bg-slate-800',
+            );
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy', err);
+        }
+        document.body.removeChild(tempTextArea);
+      }
+
+      function showToast() {
+        const toast = document.getElementById('toast');
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => {
+          toast.style.transform = 'translateY(150%)';
+        }, 2500);
+      }
+    </script>
+  </body>
+</html>

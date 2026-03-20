@@ -1,0 +1,144 @@
+LaneFly Brand Handoff & Implementation Guide
+
+This document contains the specifications for implementing the LaneFly logo and brand kit into a React + TypeScript + Vite application using Tailwind CSS.
+
+1. Brand Concept
+
+LaneFly is a Kanban and swimlane application (a Trello clone). The logo merges structural board columns with horizontal swimlane indicators, culminating in a dynamic "flying" card that represents speed and task completion.
+
+2. Global Assets & Dependencies
+
+To replicate the exact look and feel from the prototype, ensure the following dependencies are installed and configured in your Vite/React environment.
+
+Fonts:
+
+Family: 'Outfit', sans-serif
+
+Weights: 400 (Regular), 600 (SemiBold), 800 (ExtraBold)
+
+Import: <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+Icons:
+
+Use lucide-react for UI icons (like the copy button or feather icon in the prototype).
+
+Styling:
+
+Tailwind CSS (Default configuration is sufficient, no custom config required for the core colors as they use standard Tailwind palettes).
+
+3. Color Palette
+
+The brand utilizes a vibrant, energetic orange palette paired with deep slate for contrast.
+
+Color Name
+
+Hex Code
+
+Tailwind Class
+
+RGB
+
+Primary Orange
+
+#EA580C
+
+orange-600
+
+rgb(234, 88, 12)
+
+Action Orange
+
+#F97316
+
+orange-500
+
+rgb(249, 115, 22)
+
+Flight Amber
+
+#FBBF24
+
+amber-400
+
+rgb(251, 191, 36)
+
+Slate Black
+
+#0F172A
+
+slate-900
+
+rgb(15, 23, 42)
+
+Note: Dark mode variations utilize lighter slate tones (slate-400/slate-800) and slightly shifted amber/orange tones (orange-300/amber-300) for accessibility.
+
+4. React TypeScript Component Guidelines
+
+When converting the raw SVGs from the design prototype into React components (.tsx), the following transformations must be applied:
+
+A. SVG Attribute Conversion (CamelCase)
+
+React requires SVG attributes to be camelCased. Make sure the converting agent applies these updates:
+
+stroke-width ➔ strokeWidth
+
+stroke-dasharray ➔ strokeDasharray
+
+stroke-linecap ➔ strokeLinecap
+
+stop-color ➔ stopColor
+
+flood-color ➔ floodColor
+
+flood-opacity ➔ floodOpacity
+
+class ➔ className
+
+B. Suggested Component Structure
+
+It is recommended to create a single reusable Logo component that accepts variants via props.
+
+import React from 'react';
+
+interface LogoProps {
+variant?: 'icon' | 'lockup' | 'dark';
+className?: string; // For sizing (e.g., w-32 h-32)
+}
+
+export const Logo: React.FC<LogoProps> = ({ variant = 'lockup', className = '' }) => {
+if (variant === 'icon') {
+return (
+<svg viewBox="0 0 120 120" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" className={className}>
+{/_ React-formatted SVG Paths Here _/}
+</svg>
+);
+}
+
+if (variant === 'dark') {
+// Return dark mode lockup
+}
+
+// Return default lockup
+};
+
+C. Defs and Gradients Management
+
+The logos heavily rely on <defs> for gradients and drop shadows (<filter>).
+
+Important ID Management: If rendering multiple logos on the same page in React, ensure the <linearGradient id="..."> strings are unique across components, or extract them into a global SVG definitions component hidden on the page. Otherwise, the DOM might cross-reference the wrong gradient IDs.
+
+D. Typography inside SVG
+
+The lockup versions contain embedded text:
+
+<text x="125" y="76" className="font-outfit" fontSize="52" fontWeight="800" fill="#0f172a" letterSpacing="-1.5">
+  Lane<tspan fill="#f97316">Fly</tspan>
+</text>
+
+Ensure that the global CSS or Tailwind injects the Outfit font so the <text> element renders correctly within the SVG.
+
+5. UI/UX Implementation Notes
+
+Interactive Elements: The cards in the prototype use hover states to lift the card (transform: translateY(-4px)) and increase the shadow. In Tailwind React, this should be implemented as: className="transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl".
+
+Backgrounds: The app background should ideally be a soft slate (bg-slate-50 or bg-slate-100) to allow the white background of the Kanban columns to pop.
