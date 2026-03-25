@@ -1,4 +1,4 @@
-import { useCallback, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, type ReactNode } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -16,8 +16,11 @@ import {
 } from '@dnd-kit/sortable';
 import type { ColumnWithCards } from '@/features/columns/types';
 import type { Lane } from '@/types/common';
-import { useBoardDnd } from './use-board-dnd';
+import { useBoardDnd, type CardDragOverride } from './use-board-dnd';
 import { BoardDragOverlay } from './drag-overlay';
+
+const CardDragOverrideContext = createContext<CardDragOverride | null>(null);
+export const useCardDragOverride = () => useContext(CardDragOverrideContext);
 
 interface BoardDndContextProps {
   boardId: string;
@@ -39,6 +42,7 @@ export function BoardDndContext({ boardId, columns, lanes, onColumnLaneChange, c
     activeCard,
     activeColumn,
     activeLane,
+    cardDragOverride,
     type: dragType,
     handleDragStart,
     handleDragEnd,
@@ -82,15 +86,17 @@ export function BoardDndContext({ boardId, columns, lanes, onColumnLaneChange, c
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {hasLanes ? (
-        <SortableContext items={laneIds} strategy={verticalListSortingStrategy}>
-          {children}
-        </SortableContext>
-      ) : (
-        <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
-          {children}
-        </SortableContext>
-      )}
+      <CardDragOverrideContext.Provider value={cardDragOverride}>
+        {hasLanes ? (
+          <SortableContext items={laneIds} strategy={verticalListSortingStrategy}>
+            {children}
+          </SortableContext>
+        ) : (
+          <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
+            {children}
+          </SortableContext>
+        )}
+      </CardDragOverrideContext.Provider>
       <BoardDragOverlay activeCard={activeCard} activeColumn={activeColumn} activeLane={activeLane} />
     </DndContext>
   );

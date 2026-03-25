@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { usePermission } from '@/features/permissions/hooks/use-permission';
@@ -7,6 +7,7 @@ import type { ColumnWithCards } from '../types';
 import { ColumnHeader } from './column-header';
 import { SortableCard } from '@/features/dnd/sortable-card';
 import { AddCard } from '@/features/cards/components/add-card';
+import { useCardDragOverride } from '@/features/dnd/dnd-context';
 import styles from './column.module.css';
 
 interface ColumnProps {
@@ -22,18 +23,37 @@ const OVERSCAN = 5;
 export function Column({ column, boardId, role, isDragging }: ColumnProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { can } = usePermission(role);
+  const cardDragOverride = useCardDragOverride();
+
+  const effectiveCards = useMemo(() => {
+    if (!cardDragOverride) return column.cards;
+
+    if (cardDragOverride.fromColumnId === column.id) {
+      return column.cards.filter((c) => c.id !== cardDragOverride.card.id);
+    }
+
+    if (cardDragOverride.toColumnId === column.id) {
+      const cards = [...column.cards];
+      const idx = Math.min(cardDragOverride.insertIndex, cards.length);
+      cards.splice(idx, 0, cardDragOverride.card);
+      return cards;
+    }
+
+    return column.cards;
+  }, [column.cards, column.id, cardDragOverride]);
 
   const virtualizer = useVirtualizer({
-    count: column.cards.length,
+    count: effectiveCards.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ESTIMATED_CARD_HEIGHT,
     overscan: OVERSCAN,
+    gap: 6,
   });
 
-  const cardIds = column.cards.map((c) => c.id);
+  const cardIds = effectiveCards.map((c) => c.id);
 
   return (
-    <div className={`${styles.column} ${isDragging ? styles.dragging : ''}`}>
+    <div data-column-id={column.id} className={`${styles.column} ${isDragging ? styles.dragging : ''}`}>
       <ColumnHeader
         column={column}
         boardId={boardId}
@@ -43,7 +63,7 @@ export function Column({ column, boardId, role, isDragging }: ColumnProps) {
         <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
           <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
             {virtualizer.getVirtualItems().map((virtualRow) => {
-              const card = column.cards[virtualRow.index];
+              const card = effectiveCards[virtualRow.index];
               if (!card) return null;
               return (
                 <div

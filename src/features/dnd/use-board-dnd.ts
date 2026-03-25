@@ -30,6 +30,13 @@ function getDragId(id: string | number): string {
   return String(id);
 }
 
+export interface CardDragOverride {
+  card: Card;
+  fromColumnId: string;
+  toColumnId: string;
+  insertIndex: number;
+}
+
 export function useBoardDnd(
   boardId: string,
   columns: ColumnWithCards[],
@@ -42,6 +49,8 @@ export function useBoardDnd(
     activeLane: null,
     type: null,
   });
+
+  const [cardDragOverride, setCardDragOverride] = useState<CardDragOverride | null>(null);
 
   const activeDragLaneRef = useRef<{
     columnId: string;
@@ -89,11 +98,14 @@ export function useBoardDnd(
     (event: DragEndEvent) => {
       const { active, over } = event;
       const dragLaneInfo = activeDragLaneRef.current;
+      const currentCardOverride = cardDragOverride;
       activeDragLaneRef.current = null;
       onColumnLaneChange?.(null);
       setDragState({ activeCard: null, activeColumn: null, activeLane: null, type: null });
+      setCardDragOverride(null);
 
-      if (!over || active.id === over.id) return;
+      if (!over) return;
+      if (active.id === over.id && !currentCardOverride) return;
 
       const type = getDragType(active.data.current);
       const activeId = getDragId(active.id);
@@ -229,73 +241,160 @@ export function useBoardDnd(
       }
 
       if (type === 'card') {
-        const overType = getDragType(over.data.current);
-
-        let targetColumnId: string;
-        let targetCards: Card[];
-
-        if (overType === 'column') {
-          targetColumnId = overId;
-          const targetCol = columns.find((c) => c.id === targetColumnId);
-          targetCards = targetCol?.cards ?? [];
+        if (currentCardOverride) {
+          // Cross-column move — position from override (matches preview)
+          const targetCol = columns.find((c) => c.id === currentCardOverride.toColumnId);
+          const targetCards = targetCol?.cards ?? [];
+          const idx = currentCardOverride.insertIndex;
+          const prevCard = idx > 0 ? targetCards[idx - 1] : undefined;
+          const nextCard = idx < targetCards.length ? targetCards[idx] : undefined;
+          const newPosition = computePosition(prevCard?.position ?? null, nextCard?.position ?? null);
+          moveCard.mutate({
+            boardId,
+            cardId: activeId,
+            columnId: currentCardOverride.toColumnId,
+            position: newPosition,
+          });
         } else {
-          const overCard = findCard(columns, overId);
-          if (!overCard) return;
-          targetColumnId = overCard.column_id;
-          const targetCol = columns.find((c) => c.id === targetColumnId);
-          targetCards = targetCol?.cards ?? [];
-        }
+          // Within-column move
+          const overType = getDragType(over.data.current);
 
-        const isSameColumn = targetCards.some((c) => c.id === activeId);
-        const filteredCards = isSameColumn
-          ? targetCards.filter((c) => c.id !== activeId)
-          : targetCards;
+          let targetColumnId: string;
+          let targetCards: Card[];
 
-        const overIndex = filteredCards.findIndex((c) => c.id === overId);
-        let newPosition: number;
+          if (overType === 'column') {
+            targetColumnId = overId;
+            const targetCol = columns.find((c) => c.id === targetColumnId);
+            targetCards = targetCol?.cards ?? [];
+          } else {
+            const overCard = findCard(columns, overId);
+            if (!overCard) return;
+            targetColumnId = overCard.column_id;
+            const targetCol = columns.find((c) => c.id === targetColumnId);
+            targetCards = targetCol?.cards ?? [];
+          }
 
-        if (overType === 'column' || overIndex === -1) {
-          const lastCard = filteredCards.length > 0 ? filteredCards[filteredCards.length - 1] : undefined;
-          const lastPos = lastCard?.position ?? 0;
-          newPosition = lastPos + 1024;
-        } else if (isSameColumn) {
-          const activeIndex = targetCards.findIndex((c) => c.id === activeId);
-          const originalOverIndex = targetCards.findIndex((c) => c.id === overId);
-          const draggingDown = activeIndex < originalOverIndex;
+          const isSameColumn = targetCards.some((c) => c.id === activeId);
+          const filteredCards = isSameColumn
+            ? targetCards.filter((c) => c.id !== activeId)
+            : targetCards;
 
-          if (draggingDown) {
-            const overCard = filteredCards[overIndex];
-            const nextCard = overIndex < filteredCards.length - 1 ? filteredCards[overIndex + 1] : undefined;
-            newPosition = computePosition(overCard?.position ?? null, nextCard?.position ?? null);
+          const overIndex = filteredCards.findIndex((c) => c.id === overId);
+          let newPosition: number;
+
+          if (overType === 'column' || overIndex === -1) {
+            const lastCard = filteredCards.length > 0 ? filteredCards[filteredCards.length - 1] : undefined;
+            const lastPos = lastCard?.position ?? 0;
+            newPosition = lastPos + 1024;
+          } else if (isSameColumn) {
+            const activeIndex = targetCards.findIndex((c) => c.id === activeId);
+            const originalOverIndex = targetCards.findIndex((c) => c.id === overId);
+            const draggingDown = activeIndex < originalOverIndex;
+
+            if (draggingDown) {
+              const overCard = filteredCards[overIndex];
+              const nextCard = overIndex < filteredCards.length - 1 ? filteredCards[overIndex + 1] : undefined;
+              newPosition = computePosition(overCard?.position ?? null, nextCard?.position ?? null);
+            } else {
+              const overCard = filteredCards[overIndex];
+              const prevCard = overIndex > 0 ? filteredCards[overIndex - 1] : undefined;
+              newPosition = computePosition(prevCard?.position ?? null, overCard?.position ?? null);
+            }
           } else {
             const overCard = filteredCards[overIndex];
             const prevCard = overIndex > 0 ? filteredCards[overIndex - 1] : undefined;
-            newPosition = computePosition(prevCard?.position ?? null, overCard?.position ?? null);
+            const leftPos = prevCard?.position ?? null;
+            newPosition = computePosition(leftPos, overCard?.position ?? 1024);
           }
-        } else {
-          const overCard = filteredCards[overIndex];
-          const prevCard = overIndex > 0 ? filteredCards[overIndex - 1] : undefined;
-          const leftPos = prevCard?.position ?? null;
-          newPosition = computePosition(leftPos, overCard?.position ?? 1024);
-        }
 
-        moveCard.mutate({
-          boardId,
-          cardId: activeId,
-          columnId: targetColumnId,
-          position: newPosition,
-        });
+          moveCard.mutate({
+            boardId,
+            cardId: activeId,
+            columnId: targetColumnId,
+            position: newPosition,
+          });
+        }
       }
     },
-    [boardId, columns, lanes, moveCard, reorderColumn, reorderLane, moveColumnToLane, onColumnLaneChange],
+    [boardId, columns, lanes, moveCard, reorderColumn, reorderLane, moveColumnToLane, onColumnLaneChange, cardDragOverride],
   );
 
   const handleDragOver = useCallback(
     (event: DragOverEvent) => {
       const { active, over } = event;
-      if (!over || !lanes || !activeDragLaneRef.current) return;
+      if (!over) return;
 
       const type = getDragType(active.data.current);
+
+      if (type === 'card') {
+        const activeId = getDragId(active.id);
+        const overId = getDragId(over.id);
+
+        // Ignore hovering over self (happens when card is optimistically in target)
+        if (overId === activeId) return;
+
+        const overType = getDragType(over.data.current);
+        const activeCard = findCard(columns, activeId);
+        if (!activeCard) return;
+        const sourceColumnId = activeCard.column_id;
+
+        // Determine target column
+        let targetColumnId: string;
+        if (overType === 'column') {
+          targetColumnId = overId;
+        } else {
+          const overCard = findCard(columns, overId);
+          if (!overCard) return;
+          targetColumnId = overCard.column_id;
+        }
+
+        // Back in source column → clear override
+        if (targetColumnId === sourceColumnId) {
+          if (cardDragOverride) setCardDragOverride(null);
+          return;
+        }
+
+        // Cross-column → compute insertion index using cursor position
+        const targetCol = columns.find((c) => c.id === targetColumnId);
+        if (!targetCol) return;
+
+        let insertIndex: number;
+        if (overType === 'column') {
+          insertIndex = targetCol.cards.length;
+        } else {
+          const overIndex = targetCol.cards.findIndex((c) => c.id === overId);
+          if (overIndex === -1) {
+            insertIndex = targetCol.cards.length;
+          } else {
+            const activeRect = active.rect.current.translated;
+            const overRect = over.rect;
+            if (activeRect) {
+              const activeCenterY = activeRect.top + activeRect.height / 2;
+              const overCenterY = overRect.top + overRect.height / 2;
+              insertIndex = activeCenterY > overCenterY ? overIndex + 1 : overIndex;
+            } else {
+              insertIndex = overIndex;
+            }
+          }
+        }
+
+        // Only update state if something changed
+        if (
+          !cardDragOverride ||
+          cardDragOverride.toColumnId !== targetColumnId ||
+          cardDragOverride.insertIndex !== insertIndex
+        ) {
+          setCardDragOverride({
+            card: activeCard,
+            fromColumnId: sourceColumnId,
+            toColumnId: targetColumnId,
+            insertIndex,
+          });
+        }
+        return;
+      }
+
+      if (!lanes || !activeDragLaneRef.current) return;
       if (type !== 'column') return;
 
       const targetLaneId = (over.data.current?.['laneId'] as string | undefined) ?? null;
@@ -307,13 +406,14 @@ export function useBoardDnd(
       dragInfo.currentLaneId = targetLaneId;
       onColumnLaneChange?.({ columnId: dragInfo.columnId, targetLaneId });
     },
-    [lanes, onColumnLaneChange],
+    [lanes, onColumnLaneChange, columns, cardDragOverride],
   );
 
   const handleDragCancel = useCallback(
     (_event: DragCancelEvent) => {
       activeDragLaneRef.current = null;
       onColumnLaneChange?.(null);
+      setCardDragOverride(null);
       setDragState({ activeCard: null, activeColumn: null, activeLane: null, type: null });
     },
     [onColumnLaneChange],
@@ -321,6 +421,7 @@ export function useBoardDnd(
 
   return {
     ...dragState,
+    cardDragOverride,
     handleDragStart,
     handleDragEnd,
     handleDragOver,
