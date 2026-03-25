@@ -60,7 +60,7 @@ export function AddColumn({ onAdd, laneId }: AddColumnProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter list title..."
+        placeholder="Enter title..."
       />
       <div className={styles.actions}>
         <Button type="submit" size="sm">

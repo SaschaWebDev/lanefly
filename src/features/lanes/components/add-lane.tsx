@@ -74,7 +74,7 @@ export function AddLane({ onAdd }: AddLaneProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Enter lane title..."
+          placeholder="Enter title..."
         />
         <div className={styles.actions}>
           <Button type="submit" size="sm">
