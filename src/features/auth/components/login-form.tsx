@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { sendMagicLink } from '../api/magic-link';
 import { signInWithOAuth } from '../api/oauth';
+import { Logo } from '@/components/brand/logo';
 import styles from './login-form.module.css';
 
 export function LoginForm() {
@@ -55,7 +56,9 @@ export function LoginForm() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <div className={styles.logo}>LaneFly</div>
+        <div className={styles.logo}>
+          <Logo variant="lockup" className={styles.logoSvg} />
+        </div>
         <div className={styles.subtitle}>
           Sign in to manage your boards
         </div>
