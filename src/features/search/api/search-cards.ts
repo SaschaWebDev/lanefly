@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { isDemoMode } from '@/config/demo';
 import { supabase } from '@/config/supabase';
 import { handleSupabaseError } from '@/lib/api-client';
+import { getDemoColumns } from '@/features/columns/api/demo-store';
 import type { Card } from '@/types/common';
 
 interface SearchFilters {
@@ -11,8 +12,22 @@ interface SearchFilters {
 
 async function searchCards(boardId: string, query: string, filters: SearchFilters): Promise<Card[]> {
   if (isDemoMode) {
-    // In-memory search would need access to the column demo store, return empty for now
-    return [];
+    const columns = getDemoColumns(boardId);
+    let cards = columns.flatMap((col) => col.cards);
+    if (query) {
+      const lower = query.toLowerCase();
+      cards = cards.filter((c) =>
+        c.title.toLowerCase().includes(lower) ||
+        c.description?.toLowerCase().includes(lower)
+      );
+    }
+    if (filters.assigneeId) {
+      cards = cards.filter((c) => c.assignee_id === filters.assigneeId);
+    }
+    if (filters.status) {
+      cards = cards.filter((c) => c.status === filters.status);
+    }
+    return cards.slice(0, 50);
   }
 
   let builder = supabase
@@ -22,7 +37,7 @@ async function searchCards(boardId: string, query: string, filters: SearchFilter
     .is('archived_at', null);
 
   if (query) {
-    builder = builder.ilike('title', `%${query}%`);
+    builder = builder.or(`title.ilike.%${query}%,description.ilike.%${query}%`);
   }
   if (filters.assigneeId) {
     builder = builder.eq('assignee_id', filters.assigneeId);
