@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
 import { useUpdateLaneMutation } from '../api/update-lane';
 import { useDeleteLaneMutation } from '../api/delete-lane';
 import { usePermanentDeleteMutation } from '@/features/archive/api/permanent-delete';
@@ -19,26 +20,13 @@ interface LaneHeaderProps {
 export function LaneHeader({ laneId, boardId, title, role, dragListeners }: LaneHeaderProps) {
   const [editTitle, setEditTitle] = useState(title);
   const [isEditing, setIsEditing] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
   const updateLane = useUpdateLaneMutation();
   const deleteLane = useDeleteLaneMutation();
   const permanentDelete = usePermanentDeleteMutation();
   const { can } = usePermission(role);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
 
   const handleBlur = useCallback(() => {
     setIsEditing(false);
@@ -81,7 +69,6 @@ export function LaneHeader({ laneId, boardId, title, role, dragListeners }: Lane
   );
 
   const handleArchive = useCallback(() => {
-    setMenuOpen(false);
     deleteLane.mutate({ boardId, laneId });
   }, [boardId, laneId, deleteLane]);
 
@@ -116,29 +103,21 @@ export function LaneHeader({ laneId, boardId, title, role, dragListeners }: Lane
       )}
       {can('column:delete') && (
         <div className={styles.menuContainer}>
-          <div className={styles.menuWrapper} ref={menuRef}>
-            <button
-              className={styles.menuButton}
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Lane menu"
-            >
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger className={styles.menuButton} aria-label="Lane menu">
               &#x22EE;
-            </button>
-            {menuOpen && (
-              <div className={styles.dropdown}>
-                <button className={styles.dropdownItem} disabled>
-                  Mock
-                </button>
-                <div className={styles.dropdownSeparator} />
-                <button className={styles.dropdownItemDanger} onClick={() => { setMenuOpen(false); setShowArchiveConfirm(true); }}>
-                  Archive
-                </button>
-                <button className={styles.dropdownItemDanger} onClick={() => { setMenuOpen(false); setShowDeleteConfirm(true); }}>
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item disabled>Mock</DropdownMenu.Item>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Item danger onSelect={() => setShowArchiveConfirm(true)}>
+                Archive
+              </DropdownMenu.Item>
+              <DropdownMenu.Item danger onSelect={() => setShowDeleteConfirm(true)}>
+                Delete
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </div>
       )}
     </div>
