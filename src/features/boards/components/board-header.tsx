@@ -93,7 +93,7 @@ export function BoardHeader({ board, onUpdateTitle, showFilters, onToggleFilters
           </button>
         )}
 
-        <SearchBar boardId={board.id} />
+        <SearchBar boardId={board.id} role={board.role} />
 
         {onToggleFilters && (
           <button

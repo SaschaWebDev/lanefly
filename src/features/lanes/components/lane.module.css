@@ -36,5 +36,4 @@
   gap: var(--space-4);
   min-width: min-content;
   align-items: flex-start;
-  max-height: 500px;
 }

@@ -15,7 +15,6 @@
   display: flex;
   gap: var(--space-4);
   align-items: flex-start;
-  max-height: 500px;
   min-width: min-content;
 }
 

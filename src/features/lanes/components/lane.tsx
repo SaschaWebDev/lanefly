@@ -31,7 +31,7 @@ export function Lane({ laneId, boardId, title, columns, role, dragListeners, onA
   );
 
   return (
-    <div className={styles.lane}>
+    <div data-lane-id={laneId} className={styles.lane}>
       <div className={styles.laneSidebar}>
         <LaneHeader
           laneId={laneId}
