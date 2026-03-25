@@ -4,13 +4,15 @@
   border: 1px solid var(--color-border);
   padding: var(--space-1) var(--space-3);
   cursor: pointer;
-  transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast),
+    transform var(--transition-fast);
   position: relative;
 }
 
 .card:hover {
   border-color: var(--color-primary-300);
   box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
 }
 
 .card:hover .contextMenu {
