@@ -5,6 +5,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth';
 import { signOut } from '@/features/auth/api/sign-out';
 import { NotificationBell } from '@/features/notifications/components/notification-bell';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Logo } from '@/components/brand/logo';
 import styles from './app-layout.module.css';
 
 interface AppLayoutProps {
@@ -27,7 +28,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <nav className={styles.navBar}>
         <div className={styles.navLeft}>
           <Link to="/" className={styles.navLogo}>
-            LaneFly
+            <Logo variant="lockup" className={styles.navLogoSvg} />
           </Link>
         </div>
         <div className={styles.navRight}>
