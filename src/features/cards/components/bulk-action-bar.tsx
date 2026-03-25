@@ -9,6 +9,7 @@ import { useMoveCardMutation } from '../api/move-card';
 import { useColumnsQuery } from '@/features/columns/api/get-columns';
 import { useLabelsQuery } from '@/features/labels/api/get-labels';
 import { useBoardMembersQuery } from '@/features/members/api/get-board-members';
+import { Avatar } from '@/features/members/components/avatar';
 import { useToggleCardLabelMutation } from '@/features/labels/api/toggle-card-label';
 import styles from './bulk-action-bar.module.css';
 
@@ -127,6 +128,7 @@ export function BulkActionBar({ boardId }: BulkActionBarProps) {
                   setShowAssign(false);
                 }}
               >
+                <span className={styles.unassignedIcon}>{'\u2715'}</span>
                 Unassigned
               </button>
               {members?.map((m) => (
@@ -140,6 +142,7 @@ export function BulkActionBar({ boardId }: BulkActionBarProps) {
                     setShowAssign(false);
                   }}
                 >
+                  <Avatar name={m.display_name} imageUrl={m.avatar_url} size="sm" />
                   {m.display_name ?? 'Unknown'}
                 </button>
               ))}

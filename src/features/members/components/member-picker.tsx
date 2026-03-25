@@ -17,6 +17,7 @@ export function MemberPicker({ boardId, selectedUserId, onSelect }: MemberPicker
         className={!selectedUserId ? styles.selected : styles.memberRow}
         onClick={() => onSelect(null)}
       >
+        <span className={styles.unassignedIcon}>{'\u2715'}</span>
         <span className={styles.name}>Unassigned</span>
         {!selectedUserId && <span className={styles.checkmark}>{'\u2713'}</span>}
       </button>

@@ -26,3 +26,16 @@
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
+
+.unassignedIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  flex-shrink: 0;
+}

@@ -10,6 +10,7 @@ import { useLanesQuery } from '@/features/lanes/api/get-lanes';
 import { useLabelsQuery } from '@/features/labels/api/get-labels';
 import { useToggleCardLabelMutation } from '@/features/labels/api/toggle-card-label';
 import { useBoardMembersQuery } from '@/features/members/api/get-board-members';
+import { Avatar } from '@/features/members/components/avatar';
 import type { Card } from '@/types/common';
 import styles from './card-context-menu.module.css';
 
@@ -115,6 +116,7 @@ export function CardContextMenu({ card, boardId, children, onDuplicate, onToggle
         {members && members.length > 0 && (
           <DropdownMenu.Sub label="Assign to">
             <DropdownMenu.SubItem onSelect={() => handleAssign(null)}>
+              <span className={styles.unassignedIcon}>{'\u2715'}</span>
               Unassigned
             </DropdownMenu.SubItem>
             {members.map((m) => (
@@ -123,6 +125,7 @@ export function CardContextMenu({ card, boardId, children, onDuplicate, onToggle
                 checked={card.assignee_id === m.user_id}
                 onSelect={() => handleAssign(m.user_id)}
               >
+                <Avatar name={m.display_name} imageUrl={m.avatar_url} size="sm" />
                 {m.display_name ?? 'Unknown'}
               </DropdownMenu.SubItem>
             ))}

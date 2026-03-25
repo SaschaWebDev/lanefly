@@ -99,6 +99,7 @@ export function FilterBar({ boardId, filters, onChange, open }: FilterBarProps) 
             className={filters.assigneeId === 'unassigned' ? styles.chipActive : styles.chip}
             onClick={() => setAssignee('unassigned')}
           >
+            <span className={styles.unassignedIcon}>{'\u2715'}</span>
             Unassigned
           </button>
           {members?.map((m) => (
