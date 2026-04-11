@@ -4,20 +4,31 @@ import { supabase } from '@/config/supabase';
 import { handleSupabaseError } from '@/lib/api-client';
 import type { ColumnWithCards } from '../types';
 import { getDemoColumns } from './demo-store';
+import { getDemoCardLabelIds, getDemoLabels } from '@/features/labels/api/demo-store';
 
 async function fetchColumns(boardId: string): Promise<ColumnWithCards[]> {
   if (isDemoMode) {
+    const demoLabels = getDemoLabels(boardId);
+    const labelsById = new Map(demoLabels.map((l) => [l.id, { id: l.id, name: l.name, color: l.color }]));
+
     return getDemoColumns(boardId)
       .sort((a, b) => a.position - b.position)
       .map((col) => ({
         ...col,
-        cards: [...col.cards].sort((a, b) => a.position - b.position),
+        cards: [...col.cards]
+          .sort((a, b) => a.position - b.position)
+          .map((card) => ({
+            ...card,
+            labels: getDemoCardLabelIds(card.id)
+              .map((id) => labelsById.get(id))
+              .filter((l): l is NonNullable<typeof l> => l != null),
+          })),
       }));
   }
 
   const { data, error } = await supabase
     .from('columns')
-    .select('id, board_id, lane_id, title, position, created_at, updated_at, archived_at, cards(id, column_id, board_id, title, description, status, position, assignee_id, due_date, created_at, updated_at, archived_at, archived_with_column)')
+    .select('id, board_id, lane_id, title, position, created_at, updated_at, archived_at, cards(id, column_id, board_id, title, description, status, position, assignee_id, due_date, created_at, updated_at, archived_at, archived_with_column, card_labels(label_id, labels(id, name, color)))')
     .eq('board_id', boardId)
     .is('archived_at', null)
     .order('position', { ascending: true });
@@ -35,7 +46,11 @@ async function fetchColumns(boardId: string): Promise<ColumnWithCards[]> {
     archived_at: col.archived_at,
     cards: col.cards
       .filter((c) => !c.archived_at)
-      .sort((a, b) => a.position - b.position),
+      .sort((a, b) => a.position - b.position)
+      .map((c) => ({
+        ...c,
+        labels: c.card_labels.map((cl) => cl.labels),
+      })),
   }));
 }
 

@@ -12,17 +12,19 @@ import { useToggleCardLabelMutation } from '@/features/labels/api/toggle-card-la
 import { useBoardMembersQuery } from '@/features/members/api/get-board-members';
 import { Avatar } from '@/features/members/components/avatar';
 import type { Card } from '@/types/common';
+import type { CardLabel } from '@/features/columns/types';
 import styles from './card-context-menu.module.css';
 
 interface CardContextMenuProps {
   card: Card;
   boardId: string;
+  labels?: CardLabel[];
   children: React.ReactNode;
   onDuplicate?: () => void;
   onToggleStatus?: () => void;
 }
 
-export function CardContextMenu({ card, boardId, children, onDuplicate, onToggleStatus }: CardContextMenuProps) {
+export function CardContextMenu({ card, boardId, labels: cardLabels, children, onDuplicate, onToggleStatus }: CardContextMenuProps) {
   const updateCard = useUpdateCardMutation();
   const deleteCard = useDeleteCardMutation();
   const permanentDelete = usePermanentDeleteMutation();
@@ -32,6 +34,7 @@ export function CardContextMenu({ card, boardId, children, onDuplicate, onToggle
   const { data: labels } = useLabelsQuery(boardId);
   const { data: members } = useBoardMembersQuery(boardId);
   const toggleLabel = useToggleCardLabelMutation();
+  const activeLabelIds = new Set(cardLabels?.map((l) => l.id) ?? []);
 
   const handleMoveToColumn = useCallback(
     (columnId: string) => {
@@ -104,7 +107,8 @@ export function CardContextMenu({ card, boardId, children, onDuplicate, onToggle
             {labels.map((label) => (
               <DropdownMenu.SubItem
                 key={label.id}
-                onSelect={() => toggleLabel.mutate({ cardId: card.id, labelId: label.id, boardId, isActive: false })}
+                checked={activeLabelIds.has(label.id)}
+                onSelect={() => toggleLabel.mutate({ cardId: card.id, labelId: label.id, boardId, isActive: activeLabelIds.has(label.id) })}
               >
                 <span className={styles.colorDot} style={{ backgroundColor: label.color }} />
                 {label.name}

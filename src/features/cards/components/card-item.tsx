@@ -125,7 +125,7 @@ export function CardItem({
 
           {role && (
             <div className={styles.contextMenu} onClick={(e) => e.stopPropagation()}>
-              <CardContextMenu card={card} boardId={boardId} onDuplicate={handleDuplicate} onToggleStatus={handleToggleStatus}>
+              <CardContextMenu card={card} boardId={boardId} labels={labels} onDuplicate={handleDuplicate} onToggleStatus={handleToggleStatus}>
                 &#x22EF;
               </CardContextMenu>
             </div>
